@@ -1,0 +1,7 @@
+apply plugin: 'argusapm'
+
+argusApmAjxConfig
+        {
+            exclude 'com.qihoo360.xxx' // 跳过 com.qihoo360.xxx包下的所有文件
+            excludeJar 'libammsdk'	// 跳过 libammsdk.jar
+        }

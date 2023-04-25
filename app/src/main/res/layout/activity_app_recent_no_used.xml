@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="match_parent"
+        android:layout_height="55dip"
+        android:background="#8866ff00"
+        android:gravity="center|left"
+        android:text="最近未使用应用管理"
+        android:textColor="#000000"
+        android:textSize="22sp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:onClick="cleanAll"
+        android:text="一键清理" />
+
+    <LinearLayout
+        android:id="@+id/ll_loading"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/textView1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="invisible" >
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="正在加载程序信息..." />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView1">
+
+        <ListView
+            android:overScrollMode="never"
+            android:fastScrollEnabled="true"
+            android:id="@+id/lv_app_manager"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+        </ListView>
+        
+        <TextView 
+            android:id="@+id/tv_status"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="用户程序:1个"
+            android:textColor="#ffffff"
+            android:background="#ff888888"/>
+    </FrameLayout>
+
+</RelativeLayout>

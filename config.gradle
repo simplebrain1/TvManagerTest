@@ -1,0 +1,83 @@
+ext {
+    COMPILE_SDK_VERSION = 30
+    MIN_SDK_VERSION = 17
+    TARGET_SDK_VERSION = 25
+    BUILDTOOLS_VERSION = "30.0.2"
+
+    supportLibVersion = "28.0.0"
+    support_v4 = '23.2.0'
+
+    recyclerview_v7_version = '23.2.0'
+
+    layoutlibJar = getLayoutlibJar()
+
+
+    multidex = '1.0.2'
+    coocaa_maven = '+'
+
+
+    cc_builder = new File(rootDir, 'tools/cc_builder.gradle')
+
+//    version_code = getVersionCode()
+//    version_name = getVersionName()
+//    version_name_suffix = getVersionNameSuffix()
+
+    gradle.ext.api = COMPILE_SDK_VERSION
+    gradle.ext.buildTools = BUILDTOOLS_VERSION
+    gradle.ext.minSdkVersion = MIN_SDK_VERSION
+    gradle.ext.targetSdkVersion = TARGET_SDK_VERSION
+}
+
+File getProjectDir(String dir) {
+    return new File("${buildscript.sourceFile.getParent()}/${dir}")
+}
+
+String getLayoutlibJar() {
+    return getProjectDir("build-libs" + File.separator + "layoutlib.jar").absolutePath
+}
+
+int getVersionCode() {
+    def cmd = 'git rev-list HEAD --first-parent --count'
+    def ret = cmd.execute().text.trim()
+    if (ret == null || ret == "")
+        return -1
+    return ret.toInteger()
+}
+
+String getVersionName() {
+    def cmd = 'git describe --tags'
+    def version = cmd.execute().text.trim()
+    if (version == null || version == "") {
+        return ""
+    }
+
+    def pattern = "-(\\d+)-g"
+    def matcher = version =~ pattern
+
+    if (matcher) {
+        version = version.substring(0, matcher.start()) + "." + matcher[0][1]
+    } else {
+        version = version + ".0"
+    }
+
+    return version
+}
+String getVersionNameSuffix() {
+    def cmd = 'git describe --tags'
+    def version = cmd.execute().text.trim()
+    if (version == null || version == "") {
+        return ""
+    }
+
+    def pattern = "-(\\d+)-g"
+    def matcher = version =~ pattern
+
+    if (matcher) {
+        version = "." + matcher[0][1]
+    } else {
+        version = ".0"
+    }
+
+    return version
+}
+

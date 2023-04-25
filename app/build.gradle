@@ -1,0 +1,178 @@
+apply plugin: 'com.android.application'
+apply plugin: 'jacoco'
+jacoco {
+    toolVersion = "0.8.5" //代码覆盖库jacoco版本号
+}
+
+
+//python相关
+//plugins {
+//    id 'com.chaquo.python'
+//}
+//plugins {
+//    id 'com.jakewharton.hugo'
+//}
+
+
+
+
+//applyplugin:'com.jakewharton.hugo'
+
+android {
+    compileSdkVersion COMPILE_SDK_VERSION
+    buildToolsVersion BUILDTOOLS_VERSION
+
+    defaultConfig {
+        applicationId "com.coocaa.coocaatvmanager"
+        minSdkVersion MIN_SDK_VERSION
+        targetSdkVersion TARGET_SDK_VERSION
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.test.runner.AndroidJUnitRunner"
+
+//        python {
+//            // python安装位置（windows可以直接找到exe文件位置）
+//            buildPython "D:/Python27/python.exe"
+//            // 安装python源码所需的三方库
+//            pip {
+//                install "numpy"
+//                install "scipy"
+//            }
+//        }
+//        ndk {
+//            abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+//        }
+    }
+
+//    sourceSets {
+//        main{
+//            // Android代码模块
+//            setRoot "src/main"
+//            // Python代码模块，也就是你的Python源码所在项目中的文件夹
+//            python.srcDirs = ["src/main/python"]
+//        }
+//    }
+
+    signingConfigs {
+        release {//发布版本的签名配置
+            storeFile file('../sign/platform.keystore')
+            keyAlias 'skyworth'
+            storePassword 'android'
+            keyPassword 'android'
+        }
+    }
+    useLibrary 'org.apache.http.legacy'
+
+    buildTypes {
+        debug {
+//            minifyEnabled false
+            testCoverageEnabled = true//设置为true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+//            testCoverageEnabled = true//设置为true
+        }
+        release {
+            minifyEnabled false
+            testCoverageEnabled = true//设置为true
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    aaptOptions.cruncherEnabled = false
+    aaptOptions.useNewCruncher = false
+}
+
+dependencies {
+    implementation 'org.aspectj:aspectjrt:1.9.5'
+//    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation 'com.android.support:support-annotations:28.0.0'
+    implementation files('libs\\coocaaJacocoLibrary-debug.aar')
+    implementation files('libs\\afinal_0.5_bin.jar')
+    implementation files('libs\\jxl-2.6.12.jar')
+    implementation files('libs\\commons-fileupload-1.3.1.jar')
+//    implementation files('libs\\commons-io-2.5.jar')
+    implementation files('libs\\javax.servlet-api-3.1.0.jar')
+    implementation project(path: ':file-scanner')
+//    implementation 'androidx.appcompat:appcompat:1.1.0'
+//    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'com.google.android.material:material:1.4.0'
+//    implementation project(path: ':argus-apm-main')
+//    implementation project(path: ':monitorLibrary')
+//    implementation project(path: ':alarmsLibrary')
+//    implementation project(path: ':coocaaJacocoLibrary')
+    testImplementation 'junit:junit:4.+'
+//    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+//    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+}
+apply plugin: 'android-aspectjx'
+
+aspectjx {
+    //排除部分路径
+    exclude 'android'
+    exclude 'com.alibaba'
+    enabled true
+}
+
+//代码覆盖率相关配置 start
+def coverageSourceDirs = [
+        './src/main/java',
+//        "$project.rootProject.rootDir/core/MultiModeService/src/main/java",
+//        "$project.rootProject.rootDir/core/MultiModeService/sdk/MultiModelSdk/src/main/java",
+]
+
+def classesDirs = [
+        "$buildDir/intermediates/javac/debug/classes",
+//        "$project.rootProject.rootDir/core/MultiModeService/build/intermediates/javac/debug/classes",
+//        "$project.rootProject.rootDir/core/MultiModeService/sdk/MultiModelSdk/build/intermediates/javac/debug/classes",
+//        project.rootProject.rootDir.parentFile.absolutePath + '/sdk/MultiModelSdk/build/intermediates/javac/debug/classes',
+]
+
+def excludeClasses = ['**/R*.class',
+                      '**/*$InjectAdapter.class',
+                      '**/*$ModuleAdapter.class',
+                      '**/*$ViewInjector*.class']
+
+task jacocoTestReport(type: JacocoReport) {
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports after running tests."
+    reports {
+//        xml.enabled = true
+        html.enabled = true
+    }
+
+    def classD = new Object[classesDirs.size()]
+    for (int i = 0; i < classesDirs.size(); i++) {
+        println classesDirs[i]
+        classD[i] = fileTree(
+                dir: classesDirs[i],
+                excludes: excludeClasses)
+    }
+    for (int i = 0; i < coverageSourceDirs.size(); i++) {
+        println coverageSourceDirs[i]
+    }
+    classDirectories.setFrom(classD)
+    getSourceDirectories().setFrom(files(coverageSourceDirs))
+    executionData.setFrom(files("$projectDir/coverage.ec"))
+
+    doFirst {
+        for (def d : classesDirs) {
+            new File(d).eachFileRecurse { file ->
+                if (file.name.contains('$$')) {
+                    file.renameTo(file.path.replace('$$', '$'))
+                }
+            }
+        }
+    }
+}
+//代码覆盖率相关配置 end
+
+//hugo {//性能调试开关
+//    enabled false
+//}

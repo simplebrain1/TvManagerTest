@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.coocaa.alarmslibrary">
+    <application>
+
+    <receiver android:name="com.coocaa.alarmslibrary.AlarmReceiver" >
+        <intent-filter>
+            <action android:name="com.coocaa.os.process.ALARM_ALERT" />
+        </intent-filter>
+    </receiver>
+
+        <service android:name="com.coocaa.alarmslibrary.TestAlarmsService"
+            />
+
+    </application>
+</manifest>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.coocaa.coocaajacocolibrary">
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <application>
+        <receiver android:name=".JacocoReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.coocaa.os.JacocoReceiver.start" />
+                <action android:name="com.coocaa.os.JacocoReceiver.stop" />
+                <action android:name="com.coocaa.os.JacocoReceiver.setPath" />
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>

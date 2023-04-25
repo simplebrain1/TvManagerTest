@@ -1,0 +1,11 @@
+File getProjectDir(String dir) {
+    return new File("${buildscript.sourceFile.getParent()}/${dir}")
+}
+rootProject.name = "CoocaaTvManager"
+include ':CoocaaTvManager'
+project(':CoocaaTvManager').projectDir = getProjectDir('app')
+include ':file-scanner'
+include ':argus-apm-main'
+include ':monitorLibrary'
+include ':alarmsLibrary'
+include ':coocaaJacocoLibrary'
